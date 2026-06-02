@@ -1,0 +1,40 @@
+.stApp {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.node-pending {
+    color: #8e8e8e;
+    font-size: 0.85rem;
+}
+
+.node-running {
+    color: #ffa500;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+.node-done {
+    color: #00c853;
+    font-size: 0.85rem;
+}
+
+.node-failed {
+    color: #ff1744;
+    font-size: 0.85rem;
+}
+
+.confidence-high {
+    color: #00c853;
+    font-weight: bold;
+}
+
+.confidence-medium {
+    color: #ffa500;
+    font-weight: bold;
+}
+
+.confidence-low {
+    color: #ff1744;
+    font-weight: bold;
+}
