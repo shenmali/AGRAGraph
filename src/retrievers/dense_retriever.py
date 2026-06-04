@@ -11,8 +11,9 @@ class DenseRetriever:
         self.model = SentenceTransformer(config.embedding_model)
 
     def retrieve(self, query: str, k: int = 10) -> List[Document]:
-        query_embedding = self.model.encode(query).tolist()
-        results = self.store.query(query_embeddings=query_embedding, n_results=k)
+        encoded_query = self.model.encode(query)
+        query_embedding = encoded_query.tolist() if hasattr(encoded_query, "tolist") else list(encoded_query)
+        results = self.store.query(query_embedding=query_embedding, n_results=k)
 
         if not results or not results.get("documents"):
             return []
