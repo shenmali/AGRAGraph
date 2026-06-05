@@ -1,0 +1,36 @@
+{
+  "name": "agra_sample_qa",
+  "description": "Small local QA set for AGRAGraph portfolio benchmark.",
+  "questions": [
+    {
+      "id": "q1",
+      "query": "How many nodes does the AGRAGraph graph use?",
+      "expected_answer": "AGRAGraph uses nine graph nodes.",
+      "expected_source_ids": ["graph-flow"]
+    },
+    {
+      "id": "q2",
+      "query": "Which retriever is used for factual queries?",
+      "expected_answer": "Factual queries use BM25 keyword retrieval.",
+      "expected_source_ids": ["retrieval-routing"]
+    },
+    {
+      "id": "q3",
+      "query": "What happens when the generated answer is hallucinated?",
+      "expected_answer": "The graph refines the query and loops back while retries remain.",
+      "expected_source_ids": ["self-correction"]
+    },
+    {
+      "id": "q4",
+      "query": "Does AGRAGraph require an external vector database?",
+      "expected_answer": "No. It uses an in-memory numpy-backed DocumentStore.",
+      "expected_source_ids": ["document-store"]
+    },
+    {
+      "id": "q5",
+      "query": "Why does the project include a local benchmark?",
+      "expected_answer": "The benchmark provides a small reproducible portfolio comparison.",
+      "expected_source_ids": ["benchmark-purpose"]
+    }
+  ]
+}
