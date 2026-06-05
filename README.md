@@ -141,14 +141,36 @@ streamlit run demo/app.py
 ### 3 Steps in the UI
 
 1. **Sidebar**: Enter your API key + choose model
-2. **Documents tab**: Upload PDFs, Markdown files, or paste text
-3. **Query tab**: Ask a question → **Run** → see answer + confidence + pipeline trace
+2. **Documents tab**: Upload files, paste text, or click **Load sample corpus**
+3. **Query tab**: Ask a question or choose a sample question → **Run** → see answer, confidence, citations, and pipeline trace
 
 ### CLI Mode
 
 ```bash
 python3 -m src.main "What is the difference between RAG and Agentic RAG?"
 ```
+
+## Reproducible Sample Benchmark
+
+AGRAGraph includes a small local benchmark that compares:
+
+- **Naive RAG**: retrieve chunks, generate once, return the answer.
+- **Agentic RAG**: classify, retrieve, rerank, generate, validate, refine when needed, finalize.
+
+Run it with:
+
+```bash
+python3 -m evals.run_eval --dataset evals/datasets/sample_qa.json --out docs/benchmark-results.md
+```
+
+The command writes:
+
+- `docs/benchmark-results.md`
+- `docs/benchmark-results.json`
+
+If no LLM key is configured, the runner still validates the dataset, loads the sample corpus, performs retrieval smoke checks, and marks LLM-dependent steps as skipped.
+
+Latest sample output: [docs/benchmark-results.md](docs/benchmark-results.md)
 
 ## Architecture
 
