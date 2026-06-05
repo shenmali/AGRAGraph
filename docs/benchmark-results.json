@@ -1,0 +1,161 @@
+{
+  "dataset_name": "agra_sample_qa",
+  "skipped_llm": true,
+  "summary": {
+    "total_questions": 5,
+    "naive_answer_rate": 0.0,
+    "agentic_answer_rate": 0.0,
+    "naive_citation_hit_rate": 1.0,
+    "agentic_citation_hit_rate": 0.0,
+    "agentic_total_retries": 0
+  },
+  "records": [
+    {
+      "id": "q1",
+      "query": "How many nodes does the AGRAGraph graph use?",
+      "expected_answer": "AGRAGraph uses nine graph nodes.",
+      "expected_source_ids": [
+        "graph-flow"
+      ],
+      "naive": {
+        "answer": "",
+        "citations": [],
+        "observed_source_ids": [
+          "retrieval-routing",
+          "graph-flow",
+          "benchmark-purpose"
+        ],
+        "retrieved_count": 3,
+        "latency_ms": 11,
+        "error": null
+      },
+      "agentic": {
+        "answer": "",
+        "citations": [],
+        "observed_source_ids": [],
+        "retry_count": 0,
+        "confidence": 0.0,
+        "latency_ms": 0,
+        "error": "LLM configuration unavailable; agentic graph skipped."
+      }
+    },
+    {
+      "id": "q2",
+      "query": "Which retriever is used for factual queries?",
+      "expected_answer": "Factual queries use BM25 keyword retrieval.",
+      "expected_source_ids": [
+        "retrieval-routing"
+      ],
+      "naive": {
+        "answer": "",
+        "citations": [],
+        "observed_source_ids": [
+          "retrieval-routing",
+          "document-store",
+          "agra-overview",
+          "benchmark-purpose"
+        ],
+        "retrieved_count": 4,
+        "latency_ms": 0,
+        "error": null
+      },
+      "agentic": {
+        "answer": "",
+        "citations": [],
+        "observed_source_ids": [],
+        "retry_count": 0,
+        "confidence": 0.0,
+        "latency_ms": 0,
+        "error": "LLM configuration unavailable; agentic graph skipped."
+      }
+    },
+    {
+      "id": "q3",
+      "query": "What happens when the generated answer is hallucinated?",
+      "expected_answer": "The graph refines the query and loops back while retries remain.",
+      "expected_source_ids": [
+        "self-correction"
+      ],
+      "naive": {
+        "answer": "",
+        "citations": [],
+        "observed_source_ids": [
+          "benchmark-purpose",
+          "self-correction",
+          "agra-overview",
+          "retrieval-routing",
+          "document-store"
+        ],
+        "retrieved_count": 5,
+        "latency_ms": 0,
+        "error": null
+      },
+      "agentic": {
+        "answer": "",
+        "citations": [],
+        "observed_source_ids": [],
+        "retry_count": 0,
+        "confidence": 0.0,
+        "latency_ms": 0,
+        "error": "LLM configuration unavailable; agentic graph skipped."
+      }
+    },
+    {
+      "id": "q4",
+      "query": "Does AGRAGraph require an external vector database?",
+      "expected_answer": "No. It uses an in-memory numpy-backed DocumentStore.",
+      "expected_source_ids": [
+        "document-store"
+      ],
+      "naive": {
+        "answer": "",
+        "citations": [],
+        "observed_source_ids": [
+          "document-store",
+          "agra-overview"
+        ],
+        "retrieved_count": 2,
+        "latency_ms": 0,
+        "error": null
+      },
+      "agentic": {
+        "answer": "",
+        "citations": [],
+        "observed_source_ids": [],
+        "retry_count": 0,
+        "confidence": 0.0,
+        "latency_ms": 0,
+        "error": "LLM configuration unavailable; agentic graph skipped."
+      }
+    },
+    {
+      "id": "q5",
+      "query": "Why does the project include a local benchmark?",
+      "expected_answer": "The benchmark provides a small reproducible portfolio comparison.",
+      "expected_source_ids": [
+        "benchmark-purpose"
+      ],
+      "naive": {
+        "answer": "",
+        "citations": [],
+        "observed_source_ids": [
+          "document-store",
+          "benchmark-purpose",
+          "agra-overview"
+        ],
+        "retrieved_count": 3,
+        "latency_ms": 0,
+        "error": null
+      },
+      "agentic": {
+        "answer": "",
+        "citations": [],
+        "observed_source_ids": [],
+        "retry_count": 0,
+        "confidence": 0.0,
+        "latency_ms": 0,
+        "error": "LLM configuration unavailable; agentic graph skipped."
+      }
+    }
+  ]
+}
