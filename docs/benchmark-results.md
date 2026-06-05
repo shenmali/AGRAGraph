@@ -21,7 +21,7 @@ This is a small local portfolio benchmark. It is not an academic benchmark.
 - Expected sources: `graph-flow`
 - Naive observed sources: `retrieval-routing, graph-flow, benchmark-purpose`
 - Agentic observed sources: ``
-- Naive latency: `11` ms
+- Naive latency: `12` ms
 - Agentic latency: `0` ms
 
 - Agentic error: `LLM configuration unavailable; agentic graph skipped.`
