@@ -27,12 +27,21 @@ def render_sidebar():
 
 
 def render_documents():
+    from demo.sample_data import load_sample_corpus
     from src.retrievers.document_store import DocumentStore
     from src.retrievers.loader import extract_text
     import uuid
 
     store = DocumentStore.get_instance()
     st.metric("Documents indexed", store.count())
+
+    if st.button("Load sample corpus"):
+        added = load_sample_corpus()
+        if added:
+            st.success(f"Loaded {added} sample documents")
+        else:
+            st.info("Sample corpus already loaded")
+        st.rerun()
 
     tab1, tab2 = st.tabs([" Paste Text", " Upload File"])
 
@@ -112,9 +121,18 @@ def render_results(result: dict):
     c3.metric("Relevance", result.get("relevance_check", "N/A").capitalize())
     c4.metric("Retries", result.get("retry_count", 0))
 
-    with st.expander("Pipeline trace"):
-        for step in result.get("intermediate_results", []):
-            st.text(f"→ {step['node']}: {step['output']}")
+    chunks = result.get("reranked_chunks", [])
+    if chunks:
+        with st.expander("Sources", expanded=True):
+            for index, doc in enumerate(chunks, start=1):
+                source = doc.metadata.get("source", "unknown")
+                preview = doc.content[:280] + ("..." if len(doc.content) > 280 else "")
+                st.markdown(f"**[Source {index}] {source}**")
+                st.caption(preview)
+
+    with st.expander("Pipeline trace", expanded=True):
+        for index, step in enumerate(result.get("intermediate_results", []), start=1):
+            st.markdown(f"**{index}. `{step['node']}`** - {step['output']}")
 
 
 def main():
@@ -127,7 +145,14 @@ def main():
     with t1:
         render_documents()
     with t2:
-        query = st.text_area("Enter query", height=80, placeholder="What is retrieval-augmented generation?")
+        from demo.sample_data import get_sample_questions
+
+        sample_question = st.selectbox(
+            "Try a sample question",
+            [""] + get_sample_questions(),
+            format_func=lambda value: "Custom question" if value == "" else value,
+        )
+        query = st.text_area("Enter query", value=sample_question, height=80)
         c1, c2 = st.columns([1, 3])
         if c1.button("Run", type="primary"):
             with st.spinner("Running..."):
