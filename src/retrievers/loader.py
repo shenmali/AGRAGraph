@@ -1,3 +1,4 @@
+import threading
 from io import BytesIO
 
 import numpy as np
@@ -8,6 +9,7 @@ MIN_TEXT_CHARS_PER_PAGE = 20
 RENDER_SCALE = 2.0
 
 _ocr_engine = None
+_ocr_lock = threading.Lock()
 
 
 def _get_ocr_engine():
@@ -37,11 +39,14 @@ def extract_text(file_bytes: bytes, filename: str) -> str:
         for index, page in enumerate(reader.pages):
             text = (page.extract_text() or "").strip()
             if len(text) < MIN_TEXT_CHARS_PER_PAGE:
-                if pdf_doc is None:
-                    pdf_doc = pdfium.PdfDocument(file_bytes)
-                text = _ocr_page(pdf_doc, index)
+                # pdfium is not thread-safe; serialize all native access
+                with _ocr_lock:
+                    if pdf_doc is None:
+                        pdf_doc = pdfium.PdfDocument(file_bytes)
+                    text = _ocr_page(pdf_doc, index)
             pages.append(text)
         if pdf_doc is not None:
-            pdf_doc.close()
+            with _ocr_lock:
+                pdf_doc.close()
         return "\n\n".join(pages)
     return file_bytes.decode("utf-8")
