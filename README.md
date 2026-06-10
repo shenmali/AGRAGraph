@@ -200,6 +200,7 @@ CLAUDE.md            # Development guidelines for AI agents working on this repo
 - **No external DB.** DocumentStore is pure in-memory with numpy. No ChromaDB, no FAISS, no Docker.
 - **One config object.** All settings flow through `src/config.py`. Nodes never call `os.getenv()`.
 - **Graph-first architecture.** Adding a new validation step is adding one node + one edge. Not restructuring a pipeline.
+- **Scanned PDFs just work.** Pages with no text layer fall back to local OCR (RapidOCR, per page, Turkish + English). No API calls, no toggles, zero cost for digital PDFs.
 
 ## Benchmark: Naive RAG vs Agentic RAG
 
@@ -236,7 +237,7 @@ python3 -m pytest tests/ -v
 | **Embeddings** | sentence-transformers (all-MiniLM-L6-v2, local & free) |
 | **Keyword search** | BM25 (rank_bm25) |
 | **Vector similarity** | NumPy cosine similarity |
-| **File parsing** | PyPDF2 (PDF), UTF-8 (TXT/MD) |
+| **File parsing** | PyPDF2 (PDF) + RapidOCR fallback for scanned pages, UTF-8 (TXT/MD) |
 | **UI** | Streamlit |
 | **Tests** | pytest |
 
