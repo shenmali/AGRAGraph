@@ -2,6 +2,8 @@
 
 Run from the repo root:  python3 tests/fixtures/generate_fixtures.py
 The three PDFs it writes are committed so tests never regenerate them.
+Regenerating is not byte-reproducible (Pillow embeds a CreationDate in
+scanned.pdf); the committed binaries are the source of truth.
 """
 from io import BytesIO
 from pathlib import Path
@@ -43,7 +45,7 @@ def build_text_layer_pdf() -> bytes:
 
 
 def build_scanned_pdf() -> bytes:
-    image = Image.new("RGB", (1240, 1754), "white")  # ~A4 at 150 DPI
+    image = Image.new("RGB", (1240, 1754), "white")  # Pillow embeds at 72 DPI; oversized page is harmless for OCR
     draw = ImageDraw.Draw(image)
     font = ImageFont.load_default(size=56)
     for line_index, line in enumerate(SCAN_LINES):

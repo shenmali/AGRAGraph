@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.retrievers import loader
+from src.retrievers import loader  # monkeypatched in the lazy-engine guard test
 from src.retrievers.loader import extract_text
 
 FIXTURES = Path(__file__).parent / "fixtures"
