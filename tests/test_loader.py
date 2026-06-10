@@ -27,3 +27,13 @@ def test_mixed_pdf_extracts_both_pages():
     result = extract_text(content, "mixed.pdf")
     assert "LangGraph" in result
     assert "RETRIEVAL" in result.upper()
+
+
+def test_text_layer_pdf_never_constructs_ocr_engine(monkeypatch):
+    def _fail():
+        raise AssertionError("OCR engine must not be constructed for text-layer PDFs")
+
+    monkeypatch.setattr(loader, "_get_ocr_engine", _fail)
+    content = (FIXTURES / "text_layer.pdf").read_bytes()
+    result = loader.extract_text(content, "text_layer.pdf")
+    assert "LangGraph" in result
