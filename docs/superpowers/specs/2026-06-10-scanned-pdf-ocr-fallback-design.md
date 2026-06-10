@@ -39,8 +39,9 @@ user-facing setting exists.
 
 ### Dependencies (added to `requirements.txt`)
 
-- `rapidocr>=2.0` — unified RapidOCR package (~15 MB wheel, default det/cls/rec models
-  bundled). The legacy `rapidocr_onnxruntime` package is deprecated.
+- `rapidocr>=3.0.0` — unified RapidOCR package (~15 MB wheel, default det/cls/rec models
+  bundled). The legacy `rapidocr_onnxruntime` package is deprecated. (Floor raised from
+  the originally specced `>=2.0` during review: 2.0.x does not expose the `LangRec` API.)
 - `onnxruntime>=1.17` — inference engine; since rapidocr 2.0.6 it must be installed
   explicitly.
 - `pypdfium2>=4.0` — renders PDF pages to images. Permissive license, binary wheels,
@@ -121,6 +122,25 @@ Verification commands:
 
 Add one bullet to the README feature list: scanned-PDF support via automatic OCR
 fallback (RapidOCR, local, no API calls). No other documentation changes.
+
+## Implementation Deviations (accepted in review)
+
+Recorded after implementation; each was reviewed and kept deliberately:
+
+- **`rapidocr>=3.0.0` + `Pillow>=10.1,<11` pins** — 2.0.x lacks `LangRec`; Pillow is
+  capped because streamlit's transitive constraint forces `<11` and the fixture
+  generator needs `>=10.1`.
+- **`.gitattributes`: `tests/fixtures/*.pdf binary`** — the hand-written text-layer
+  fixture is pure-ASCII PDF that git would otherwise treat as text (CRLF conversion
+  would corrupt its xref offsets).
+- **`_ocr_lock` (module-level `threading.Lock`)** — PDFium is not thread-safe and
+  concurrent Streamlit sessions share the process; the lock serializes document open,
+  render+OCR, and close. Text-layer pages never take the lock, preserving the
+  zero-added-cost promise.
+- **Hardened OCR guard + `try/finally` close** — `getattr(result, "txts", None)`
+  tolerates rapidocr output types without a `txts` attribute; the `finally` guarantees
+  the pdfium handle closes if a page raises mid-loop. No `except` anywhere — exceptions
+  still propagate to the UI per the error-handling section above.
 
 ## Performance Expectations
 
