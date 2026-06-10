@@ -26,7 +26,7 @@ def _ocr_page(pdf_doc, page_index: int) -> str:
     # rapidocr expects cv2-style BGR; to_pil() yields RGB
     image = np.ascontiguousarray(np.asarray(bitmap.to_pil().convert("RGB"))[:, :, ::-1])
     result = _get_ocr_engine()(image)
-    if result is None or result.txts is None:
+    if getattr(result, "txts", None) is None:
         return ""
     return "\n".join(result.txts)
 
@@ -36,17 +36,19 @@ def extract_text(file_bytes: bytes, filename: str) -> str:
         reader = PdfReader(BytesIO(file_bytes))
         pdf_doc = None
         pages = []
-        for index, page in enumerate(reader.pages):
-            text = (page.extract_text() or "").strip()
-            if len(text) < MIN_TEXT_CHARS_PER_PAGE:
-                # pdfium is not thread-safe; serialize all native access
+        try:
+            for index, page in enumerate(reader.pages):
+                text = (page.extract_text() or "").strip()
+                if len(text) < MIN_TEXT_CHARS_PER_PAGE:
+                    # pdfium is not thread-safe; serialize all native access
+                    with _ocr_lock:
+                        if pdf_doc is None:
+                            pdf_doc = pdfium.PdfDocument(file_bytes)
+                        text = _ocr_page(pdf_doc, index)
+                pages.append(text)
+        finally:
+            if pdf_doc is not None:
                 with _ocr_lock:
-                    if pdf_doc is None:
-                        pdf_doc = pdfium.PdfDocument(file_bytes)
-                    text = _ocr_page(pdf_doc, index)
-            pages.append(text)
-        if pdf_doc is not None:
-            with _ocr_lock:
-                pdf_doc.close()
+                    pdf_doc.close()
         return "\n\n".join(pages)
     return file_bytes.decode("utf-8")
