@@ -19,7 +19,7 @@ pages) silently lose the scanned pages.
 | When does OCR run? | Automatic per-page fallback only. No UI toggle, no config knob. |
 | Dependency packaging | Direct entries in `requirements.txt` (not optional/lazy). |
 | Input scope | PDF only. No PNG/JPG upload support. |
-| Languages | Latin recognition model (covers Turkish incl. ı/ğ/ş/ö/ç and English). |
+| Languages | Latin recognition model, PP-OCRv5 (covers Turkish incl. ı/ğ/ş/ö/ç and English; the PP-OCRv3 latin default lacks ğ/ş/İ). |
 | Fallback granularity | Per page: a page whose text layer yields < 20 chars (after `.strip()`) is OCR'd individually. |
 
 ## Out of Scope
@@ -76,7 +76,7 @@ pages that need it.
 - `extract_text(file_bytes, filename)` — public API, signature unchanged. The PDF
   branch iterates pages with the per-page fallback.
 - `_get_ocr_engine()` — lazy module-level singleton. Constructs
-  `RapidOCR(params={"Rec.lang_type": LangRec.LATIN})` on first call (~1–2 s init).
+  `RapidOCR(params={"Rec.lang_type": LangRec.LATIN, "Rec.ocr_version": OCRVersion.PPOCRV5})` on first call (~1–2 s init).
   Never constructed if no scanned page is ever seen.
 - `_ocr_page(pdf_doc, page_index)` — renders one page via pypdfium2 to a numpy array,
   runs the engine, returns `"\n".join(result.txts)` (empty string when OCR finds
@@ -141,6 +141,10 @@ Recorded after implementation; each was reviewed and kept deliberately:
   tolerates rapidocr output types without a `txts` attribute; the `finally` guarantees
   the pdfium handle closes if a page raises mid-loop. No `except` anywhere — exceptions
   still propagate to the UI per the error-handling section above.
+- **PP-OCRv5 latin recognition model** (`"Rec.ocr_version": OCRVersion.PPOCRV5`) — the
+  PP-OCRv3 latin model that `LangRec.LATIN` selects by default has a 185-char dictionary
+  with no ğ/Ğ/ş/Ş/İ, making Turkish output ASCII-folded; the v5 latin dictionary
+  (502 chars) covers all Turkish-specific characters (verified by OCR probe).
 
 ## Performance Expectations
 

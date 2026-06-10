@@ -15,9 +15,15 @@ _ocr_lock = threading.Lock()
 def _get_ocr_engine():
     global _ocr_engine
     if _ocr_engine is None:
-        from rapidocr import RapidOCR, LangRec
+        from rapidocr import RapidOCR, LangRec, OCRVersion
 
-        _ocr_engine = RapidOCR(params={"Rec.lang_type": LangRec.LATIN})
+        # v5 latin: its dictionary covers Turkish ğ/ş/İ; the v3 default does not
+        _ocr_engine = RapidOCR(
+            params={
+                "Rec.lang_type": LangRec.LATIN,
+                "Rec.ocr_version": OCRVersion.PPOCRV5,
+            }
+        )
     return _ocr_engine
 
 
